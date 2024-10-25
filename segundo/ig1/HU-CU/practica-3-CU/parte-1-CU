@@ -1,0 +1,25 @@
+## Parte I: definiciones generales (Respuestas).  
+
+**a)** Se analizan las características del usuario, quién y para qué va a usar el producto y las condiciones en las que lo usará.  
+
+**b)** proceso de modelado de un problema en término de los eventos que interactúan entre los usuarios y el sistema. Simplemente son una ayuda para definir lo que existe fuera del sistema (actores) y lo que debe realizar el sistema (casos de uso).  
+
+**c) Actores:** un actor inicia una actividad en el sistema(CU) y representa un papel desempeñado por un usuario que interactúa(rol), puede ser una persona, sistema externo o dispositivo externo que dispare un evento.  
+**Escenario:** descripción de la interacción entre el actor y el sistema para realizar la funcionalidad. 
+
+*Ejemplo de un escenario*
+
+| nombre del CU |           |   |    
+|---------------|-----------|---|
+| descripción |
+|actores |
+|precondiciones |
+|curso normal |  acción del actor | acciones del sistema |             
+|   |   ... | ... |
+|curso alterno|
+|postcondición|  
+
+**d) Asociaciones:** relación entre un actor y CU en el que interactúan entre sí.  
+**Extensiones** inciados solo por un CU y pueden ser varios, un CU extiende la funcionalidad de otro CU.  
+**Uso o inclusión:** reduce la redundancia entre dos o más CU al combinar los pasos comunes de los CU.  
+**Herencia o jerarquía:** relación entre actores donde un actor hereda las funcionalidades de uno o varios actores.  

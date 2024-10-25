@@ -1,0 +1,88 @@
+programa ej4 
+procesos
+  proceso depositarFlores  
+  comenzar
+    mientras (HayFlorEnLaBolsa) 
+      depositarFlor 
+  fin
+  proceso juntarFlores (ES flor : numero)
+  comenzar
+    mientras (HayFlorEnLaEsquina)
+      tomarFlor
+      flor := flor + 1
+  fin
+  proceso depositar (E ave : numero; E ca : numero)
+  comenzar
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    depositarFlores
+    Pos(ave,ca)
+    LiberarEsquina(10,10)
+  fin
+areas
+  deposito : AreaC(10,10,10,10) 
+  areaF1 :   AreaP(1,1,1,1) 
+  areaF2 : AreaP(2,1,2,1) 
+  areaFis : AreaP(3,1,3,1) 
+  cuadrado : AreaPC(40,40,60,60) 
+robots
+  robot florero
+  variables
+    flores, avInicial, caInicial, ave, ca : numero
+  comenzar
+    avInicial := PosAv
+    caInicial := PosCa
+    flores := 0
+    repetir 8
+      RecibirMensaje(ave,fis)
+      RecibirMensaje(ca,fis)
+      BloquearEsquina(ave,ca)
+      Pos(ave,ca)
+      juntarFlores(flores)
+      Pos(avInicial,caInicial)
+      LiberarEsquina(ave,ca)
+    depositar(avInicial,caInicial)
+    Informar(flores)
+    EnviarMensaje(V,fis)
+  fin
+  robot fiscalizador
+  variables
+    flores, ave, ca : numero
+    ok : boolean
+  comenzar
+    flores := 0
+    repetir 8
+      Random(ave,40,60)
+      Random(ca,40,60)
+      EnviarMensaje(ave,f1)
+      EnviarMensaje(ca,f1)
+      Random(ave,40,60)
+      Random(ca,40,60)
+      EnviarMensaje(ave,f2)
+      EnviarMensaje(ca,f2)
+    repetir 2
+      RecibirMensaje(ok,*)
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    juntarFlores(flores)
+    Pos(3,1)
+    LiberarEsquina(10,10)
+    Informar(flores)
+  fin
+variables
+  f1 : florero 
+  f2: florero 
+  fis : fiscalizador 
+comenzar
+  AsignarArea(f1,areaF1)
+  AsignarArea(f1,deposito)
+  AsignarArea(f1,cuadrado)
+  AsignarArea(f2,areaF2)
+  AsignarArea(f2,deposito)
+  AsignarArea(f2,cuadrado)
+  AsignarArea(fis,areaFis)
+  AsignarArea(fis,deposito)
+  Iniciar(f1,1,1)
+  Iniciar(f2,2,1)
+  Iniciar(fis,3,1)
+fin

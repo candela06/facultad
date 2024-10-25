@@ -1,0 +1,43 @@
+datasos:
+
+abstracción del hardware: me olvido de qué tipo de hw tengo cuando programo
+--------------------------------------------------------------------------------------------------------------
+kernel:
+
+-el kernel es el patovica que decide qué proceso es seguro para el hw.
+-gestiona los recursos a través de los System calls.
+-decide qué programa va a hacer uso del hw y x cuanto tiempo. 
+
+hay diferentes arquis o tipos de kernel:
+- microkernel -
+▪ Un elemento es aceptable dentro dell kernel solamente si al moverlo fuera pierde funcionalidad el kernel.
+▪ el kernel provee mecanismos básicos: manejo de memoria, de procesos e hilos y IPC (se logra q los programas 
+puedan determinar e/sí cómo estan corriendo en el sistema).
+▪ Todos los demas servicios (drivers, file system, protocolos de red) se ejecutan en espacio de usuario, pero
+no forman parte del kernel (sí del SO).
+▪ el kernel es el principal responsable de que el equipo no se cuelgue, no los otros servicios. 
+
+EJ: minix, L4, Symbian, DragonFly BSD, QNX, Mach, Redox.
+
+- kernel monolítico -
+. reune las funciones básicas en un solo programa, pero corre en modo privilegiado (modo kernel). 
+Gestiona todo lo que se quiere hacer para que el hw lo haga efectivamente.
+EJ: linux, android, ios, macOS, unix.
+
+-kernel híbrido -
+
+▪ junta al microkernel y al monolítico, los elementos no imprescindibles se ejecutan como servidores pero
+corre en modo privilegiado.
+
+Ej: windows, y se discute linux.
+
+-exokernel.
+
+▪ Desarrollados a modo de estudio,  son extremadamente pequeños y tiene acceso directo o casi al hw.
+--------------------------------------------------------------------------------------------------------------
+
+IPC: InterProcess Communication.
+
+▪ mecanismo para q todos los procesos se comuniquen e/ ellos.
+▪ modalidad cliente/servidor: un prm necesita un servicio y hay otro que se lo provee.
+▪ se envía el msj y se espera la rta.

@@ -1,0 +1,89 @@
+programa ej5
+procesos
+  proceso recoger(E papeles : numero; E ave : numero; E ca : numero)
+  comenzar
+    repetir papeles
+      BloquearEsquina(100,1)
+      Pos(100,1)
+      tomarPapel
+      Pos(ave,ca)
+      LiberarEsquina(100,1)
+      depositarPapel
+  fin
+  proceso juntarPapel
+  comenzar
+    mientras (HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso depositar (E papeles : numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    mientras (papeles > 0)
+      depositarPapel
+      papeles := papeles - 1
+    Pos(13,1)
+    LiberarEsquina(100,1)
+  fin
+areas
+  deposito : AreaC(100,1,100,1)
+  areaC1 : AreaP(10,1,10,1)
+  areaC2 : AreaP(11,1,11,1)
+  areaC3 : AreaP(12,1,12,1)
+  areaServer : AreaP(13,1,13,1)
+robots
+  robot cliente
+  variables
+    aux, papeles, ave, ca, id : numero
+  comenzar
+    RecibirMensaje(id,server)
+    aux := 0
+    ave := PosAv
+    ca := PosCa
+    repetir 4 
+      EnviarMensaje(id,server)
+      RecibirMensaje(papeles,server)
+      Informar(papeles)
+      recoger(papeles,ave,ca)
+      aux := aux + papeles
+    Informar('termine ',aux)
+  fin 
+  robot servidor
+  variables
+    papeles, id : numero
+  comenzar
+    juntarPapel
+    EnviarMensaje(1,c1)
+    EnviarMensaje(2,c2)
+    EnviarMensaje(3,c3)
+    repetir 12
+      RecibirMensaje(id,*)
+      Random(papeles,1,5)
+      depositar(papeles)
+      si (id = 1)
+        EnviarMensaje(papeles,c1)
+      sino
+        si (id = 2)
+          EnviarMensaje(papeles,c2)
+        sino
+          EnviarMensaje(papeles,c3)
+  fin
+variables
+  c1 : cliente
+  c2 : cliente
+  c3 : cliente
+  server : servidor
+comenzar
+  AsignarArea(c1,areaC1)
+  AsignarArea(c2,areaC2)
+  AsignarArea(c3,areaC3)
+  AsignarArea(server,areaServer)
+  AsignarArea(c1,deposito)
+  AsignarArea(c2,deposito)
+  AsignarArea(c3,deposito)
+  AsignarArea(server,deposito)
+  Iniciar(c1,10,1)
+  Iniciar(c2,11,1)
+  Iniciar(c3,12,1)
+  Iniciar(server,13,1)
+fin
