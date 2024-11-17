@@ -20,6 +20,7 @@ public class Balanza {
 		this.pesoTotal = 0;
 		this.cantidadDeProductos = 0;
 		this.precioTotal = 0;
+		this.productos = new ArrayList<Producto>();
 	}
 	
 	public void agregarProducto(Producto producto) {
