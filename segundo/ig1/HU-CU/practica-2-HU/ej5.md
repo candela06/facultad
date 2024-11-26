@@ -8,12 +8,12 @@
 - retirar fotos.
 
 ***
-<span style="color:plum"> frente </span>
+**(frente)**  
 **ID:** registro de usuario.
 **Título:** como cliente quiero registrarme en el sitio para poder subir fotos.
 **Reglas de negocio:** som nombre de usuario unico.
 
-<span style="color:plum"> dorso </span>
+**Criterios de aceptación (dorso)**  
 >**Ecenario 1** *Registro exitoso* <br>
 **Dado** el nombre de usuario charmy no se encuentra registrado  
 **cuando** el cliente ingresa Candela silva, cande@gmail.com, domicilio X, nombre de usuario charmy ycontraseña abcde759  
@@ -27,13 +27,13 @@
 
 ***
 
-<span style="color:plum"> frente </span>
+**(frente)**  
 **ID:** Iniciar sesión  
 **Título:** como usuario registrado quiero iniciar sesión para poder subir mis fotos.
 **Reglas de negocio:** el usuario debe estar registrado.
 
-<span style="color:plum">dorso</span>
-**Criterios de aceptación**
+
+**Criterios de aceptación (dorso)**  
 >**Escenario 1:** *Inicio de sesión exitoso*<br>
 **dado** que las credenciales son correctas.
 **cuando** el usuario ingresa nombre de usuario "charmy", la contrseña "abcde759" y presiona "iniciar sesion"  
@@ -46,27 +46,24 @@
 
 ***
 
-<span style="color:plum">frente</span>
-
+**(frente)**  
 **ID:** cerrar sesión
 **Título:** como usuario autenticado quiero cerrar sesión
 **Reglas de negocio:**
 
-<span style="color:plum">dorso</span>
-**Criterios de aceptación**
+**Criterios de aceptación (dorso)**  
 >**Escenario 1:** *cierre de sesión exitoso*
 **dado** el usuario "charmy" con la sesión iniciada  
 **cuando** el usuario selecciona la opción cerrar sesión 
 **entonces** el sistema cierra la sesión del usuario y lo redirige a la pantalla de inicio de sesión.  
 
 ***
-<span style="color:plum">frente</span>
+**(frente)**  
 **ID:** subir foto  
 **Título:** como usuario autenticado quiero subir fotos para poder retirarlas
 **Reglas de negocio** subir una foto a la vez, 50 fotos como máximo.  
 
-<span style="color:plum">dorso</span>
-**Criterios de aceptación**
+**Criterios de aceptación (dorso)**  
 
 >**Escenario 1:** *Éxito en subir la foto"<br>  
 **dado** el usuario está subiendo una sola foto, y lleva 40 fotos subidas  
@@ -85,13 +82,12 @@
 
 ***
 
-<span style="color:plum">frente</span>
+**(frente)**  
 **ID:** pagar con tarjeta de crédito
 **Título:** como usuario autenticado quiero pagar con tarjeta de crédito para poder retirar las fotos
 **Reglas de negocio:**
 
-<span style="color:plum">dorso</span>
-**Criterios de aceptación**
+**Criterios de aceptación (dorso)**
 
 **Escenario 1:** *pago exitoso* <br>
 >***Dado*** que la conexión con el banco es exitoso, el numero "123456" corresponde a una tarjeta de crédito y esta tiene saldo  
@@ -114,13 +110,13 @@
 ***Entonces*** el sistema no registra el pago e informa que la tarjeta no cuenta con saldo suficiente.  
 
 ***
-<span style="color:plum">frente</span>
+**(frente)**  
 **ID:** registrar codigo.
 **Títlo:** como empleado quiero registrar el codigo único del cliente para poder entregarle las fotos.  
 **Reglas de neegocio:**
 
-<span style="color:plum">dorso</span>
-**Criterios de aceptación**
+
+**Criterios de aceptación (dorso)**  
 
 **Escenario 1:** *entrega de fotos exitosa* <br>
 >***Dado*** el codigo es válido.  
