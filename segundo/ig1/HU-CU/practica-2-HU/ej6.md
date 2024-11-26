@@ -55,27 +55,27 @@ no sé si hacer un escenario para el certificado de alumno regular...
 
 **Escenario 1:** *Préstamo de libro exitoso*  
 >***Dado*** que tenga 1 préstamo vigente, no cuente con préstamos vencidos y el libro nro 2 se encuentre en buen estado.  
-***Cuando*** se solicita el libro nro 2 en buen estado, tiene 1 préstamo vigente y no cuenta con préstamos vencidos.  
+***Cuando*** se solicita el libro nro 2.    
 ***Entonces*** el sistema registar el préstamo y lo informa con éxito.  
 
 **Escenario 2:** *fallo en el préstamo del libro por contar con más de 3 préstamos vigentes*  
 >***Dado*** que se tengan más de 3 préstamos vigentes.    
-***Cuando*** se solicita un libro en buen estado, tiene más de 3 préstamos vigentes y no cuenta con préstamos vencidos.  
+***Cuando*** se solicita un libro.  
 ***Entonces*** el sistema rechaza la solicitud e informa que se cuenta con más de 3 préstamos vigentes.  
 
 **Escenario 3:** *fallo en el préstamo del libro por contar con un préstamo vencido*  
 >***Dado*** que se cuenta con un préstamo vencido.    
-***Cuando*** se solicita el libro nro 2 en buen estado, tiene 1 préstamo vigente y cuenta con un préstamo vencido.  
+***Cuando*** se solicita el libro nro 2.  
 ***Entonces*** el sistema rechaza la solicitud e informa que se cuenta con un préstamo vencido.    
 
 **Escenario 4:** *fallo en el préstamo del libro por no contar con uno en buen estado*  
 >***Dado*** que el libro nro 2 no posee ninguna versión en buen estado
-***Cuando*** se solicita el libro nro 2, tiene 1 préstamo vigente y no cuenta con préstamos vencidos.  
+***Cuando*** se solicita el libro nro 2.  
 ***Entonces*** el sistema rechaza la solicutd del préstamo e informa que no se cuenta con alguna versión en buen estado.  
 
 **Escenario 5:** *fallo en el préstamo del libro por no contar con el libro en el sistema*  
 >***Dado*** que el libro nro 2 no se encuentra registrado en el sistema.  
-***Cuando*** se solicita el libro nro 2 en buen estado, tiene 1 préstamo vigente y no cuenta con préstamos vencidos.  
+***Cuando*** se solicita el libro nro 2.  
 ***Entonces*** el sistema rechaza la solicitud e informa que no se cuenta con ese libro en el sistema.   
 
 ***
