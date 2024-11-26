@@ -5,11 +5,26 @@
 - socio habilitado  
 - bibliotecaria  
 
-##### **HU**  
+##### **HU**
+- carga de libro    
 - asociar alumno  
 - prestar libro  
 - retornar un libro  
+***
 
+**(frente)**  
+**ID:** cargar un libro.  
+**Título:** como bibliotecaria quiero cargar un libro en el sistema para poder ser préstado.  
+**Reglas de negocio:**
+
+**Criterios de aceptación(dorso)**
+
+**Escenario 1:** *Carga exitosa del libro*  
+>***Dado*** el libro nro 2.  
+***Cuando*** la bibliotecaria solicita cargar el libro nro 2.  
+***Entonces*** el sistema registra la carga del libro y lo informa con éxito.  
+
+no sé si hacer un escenario de éxito dos para actualizar la cantidad de versiones disponibles para ese título.  
 ***
 **(frente)**  
 **ID:** asociar un alumno.  
