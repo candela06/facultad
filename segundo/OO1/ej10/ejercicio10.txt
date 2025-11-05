@@ -1,0 +1,26 @@
+oo1-p10-2025
+
+1)
+1- +aportes() de la clase empleado.
+2- +montoBasico() de la clase Empleado.
+3- +sueldoBasico() de la clase Empleado.
+
+4- +sueldoBasico() de la clase EmpleadoJerarquico.
+5- +montoBasico() de la clase EmpleadoJerarquico.
+6- +bonoPorCategoria() de la clase EmpleadoJerarquico.
+
+7- +aportes() de la clase gerente.
+8- +montoBasico() de la clase gerente. 
+
+2)
+
+Alan es gerente, el this siempre es gerente
+
+aportesDeAlan -> 57000 * 0.05 = 2850
+
+sueldoBasicoDeAlan -> 57000 + 2850 + 8000 = 67850
+
+sueldoBasico() de EmpleadoJerarquico 
+		↓
+sueldoBasico de Empleado + bonoPorCategoria de Empleadojerarquico
+
