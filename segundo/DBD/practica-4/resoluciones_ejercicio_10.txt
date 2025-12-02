@@ -1,0 +1,96 @@
+1)
+SELECT c.*, v.*
+FROM Camion c
+JOIN Vehiculo v ON c.patente = v.patente
+WHERE c.cant_ruedas BETWEEN 4 AND 8
+AND EXISTS (
+	SELECT 1
+	FROM Service s
+	WHERE s.patente = c.patente
+	AND YEAR(s.fecha) = YEAR(CURRENT_DATE)
+)
+ORDER BY v.marca, v.modelo, v.patente
+
+
+2)
+SELECT a.patente, v.modelo, v.marca
+FROM Auto a
+JOIN Vehiculo v ON a.patente = v.patente
+WHERE EXISTS (
+    SELECT 1
+    FROM Service s
+    WHERE s.patente = v.patente
+      AND s.descripcion = 'cambio de aceite'
+      AND s.km_service < 13000
+)
+OR EXISTS (
+    SELECT 1
+    FROM Service s
+    JOIN Service_Parte sp ON s.fecha = sp.fecha AND s.patente = sp.patente
+    JOIN Parte p ON sp.cod_parte = p.cod_parte
+    WHERE s.patente = v.patente
+      AND s.descripcion = 'inspección general'
+      AND p.nombre = 'filtro de combustible'
+);
+
+3) -- en un mismo service pueden repetirse las partes, por ejemplo que se cambien 4 neumáticos.
+SELECT p.nombre, p.precio_parte
+FROM Parte p
+JOIN Service_Parte sp ON p.cod_parte = sp.cod_parte
+WHERE p.precio_parte > 4000
+GROUP BY p.cod_parte, p.nombre, p.precio_parte
+HAVING count(DISTINCT sp.fecha || sp.patente)
+
+
+4) 
+DELETE FROM vehiculo
+WHERE c.patente IN (
+	SELECT c.patente
+	FROM camion c
+	JOIN vehiculo ON c.patente = v.patente
+	WHERE v.km > 250000
+)
+
+5)
+Lo pensé como:
+el nombre y el precio de la parte p el cual no existe una fila
+de servicios realizados en el 2025 dónde no esté.
+
+SELECT p.nombre, p.precio_parte
+FROM Parte p
+WHERE NOT EXIST (
+	SELECT 1
+	FROM Service s
+	WHERE YEAR(s.fecha) = YEAR(CURRENT_DATE)
+	AND NOT EXIST(
+		SELECT 1
+		FROM Service_parte sp
+		WHERE sp.fecha = s.fecha
+		AND sp.patente = s.patente
+		AND sp.cod_parte = p.cod_parte
+	)
+)
+
+6)
+SELECT v.patente, v.modelo, v.marca, v.peso
+FROM Vehiculo v
+INNER JOIN Auto a ON v.patente = a.patente
+WHERE a.es_electrico = 1  
+
+7)
+INSERT INTO Parte (nombre,precio_parte)
+VALUES ('Alearon',5000)
+
+8)
+DELETE FROM Service WHERE patente = 'AWA564';
+DELETE FROM Service_Parte WHERE patente = 'AWA564' 
+
+9)
+SELECT V.*
+FROM Vehiculo v
+WHERE EXISTS (
+	SELECT 1
+	FROM Service s
+	WHERE s.patente = v.patente
+	AND YEAR(s.fecha) = 2014
+)
