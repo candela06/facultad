@@ -1,0 +1,36 @@
+1)
+SELECT v.matricula, v.CUIT, v. nombYAp, v.direccion, v.telefono, count(s.matricula) as cantidadSuperviciones
+FROM Veterinario v
+LEFT JOIN Supervision s ON v.matricula = s.matricula
+AND s.fechaSale IS NOT NULL 
+AND s.fechaSale BETWEEN '2024-01-01' AND '2024-01-31' 
+GROUP BY v.matricula, v.CUIT, v. nombYAp, v.direccion, v.telefono
+
+2)
+SELECT v.matricula, v.CUIT, v.nombYAp, v.direccion, v.telefono
+FROM Veterinario v
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Supervision s
+	WHERE s.matricula = v.matricula
+	AND s.fechaSale IS NULL
+)
+
+3)
+SELECT m.nombre, m.edad, m.raza, m.peso, m.telefonoContacto
+FROM Mascota m
+WHERE EXISTS (
+	SELECT 1
+	FROM Supervision s
+	JOIN Veterinario v ON s.matricula = v.matricula
+	WHERE s.codMascota = m.codMascota
+	AND v.nombYAp = 'Oscar Lopez'
+)
+ORDER BY m.nombre ASC, m.raza ASC
+
+4)
+UPDATE Veterinario
+SET nombYAp = 'Pablo Lopez'
+WHERE matricula = 'MN 4545'
+
+5)
