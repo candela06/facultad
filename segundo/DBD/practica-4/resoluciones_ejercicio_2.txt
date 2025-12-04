@@ -1,0 +1,151 @@
+Para ahorra tiempo si me piden varios datos de una misma tabla
+entonces los pongo a todos.
+
+1)
+SELECT a.especie, a.anios, a.calle, a.nroArbol, a.codigoPostal
+FROM Arbol a
+WHERE a.nroArbol IN (
+	SELECT p.nroArbol
+	FROM Poda p
+	JOIN Podador p2 ON p.DNI = p2.DNI
+	WHERE p2.nombre = 'Juan' AND p2.apellido = 'Perez'	
+)
+AND a.nroArbol IN (
+	SELECT p3.nroArbol
+	FROM Poda p3
+	JOIN Podador p4 ON p3.DNI = p4.DNI
+	WHERE p4.nombre = 'Jose' AND p4.apellido = 'Garcia'
+)
+
+2)
+SELECT p.DNI, p.nombre, p.apellido, p.fnac, l.nombreL AS localidad
+FROM Podador p
+JOIN Localidad l ON p.codigoPostalVive = l.codigoPostal
+WHERE p.DNI IN (
+	SELECT p2.DNI
+	FROM Poda p2
+	WHERE p2.fecha BETWEEN '2023-01-01' AND '2023-12-31'
+)
+
+3)
+SELECT a.*
+FROM Arbol a
+WHERE a.nroArbol NOT IN (
+		SELECT p.nroArbol
+		FROM Poda p
+	)
+
+4)
+-- es lo mismo que haga not exist o not in 
+-- porque no hay valores nulos en mis tablas
+-- pero para cambiar un poquito jiji
+
+SELECT a.*
+FROM Arbol a
+WHERE EXISTS (
+	SELECT 1
+	FROM Poda p
+	WHERE p.nroArbol = a.nroArbol
+	AND p.fecha BETWEEN '2022-02-01' AND '2022-12-31'
+)
+AND NOT EXISTS (
+	SELECT 1
+	FROM Poda p
+	WHERE p.nroArbol = a.nroArbol
+	AND p.fecha BETWEEN '2023-01-01' AND '2023-12-31'
+)
+
+
+5)
+SELECT p.*, l.nombreL AS localidad
+FROM Podador p
+JOIN Localidad l ON p.codigoPostalVive = l.codigoPostal
+WHERE p.apellido LIKE '%ata'
+AND p.DNI IN (
+	SELECT p2.DNI
+	FROM Poda p2
+	WHERE p2.fecha BETWEEN '2024-01-01' AND '2024-12-31'
+)
+
+6)
+
+OPCIÓN 1----------------------
+SELECT p.*
+FROM Podador p
+WHERE EXISTS (
+	SELECT 1
+	FROM Poda p2
+	JOIN Arbol a ON p2.nroArbol = a.nroArbol
+	WHERE p2.DNI = p.DNI 
+	AND a.especie = 'Coníferas'
+)
+AND NOT EXISTS (
+	SELECT 1
+	FROM Poda p3
+	JOIN Arbol a2 ON p3.nroArbol = a2.nroArbol
+	WHERE p3.DNI = p.DNI 
+	AND a2.especie != 'Coníferas'
+)
+
+
+OPCIÓN 2----------------------
+SELECT p.DNI, p.apellido, p.nombre, p.telefono, p.fnac
+FROM Podador p
+JOIN Poda po ON p.DNI = po.DNI
+JOIN Arbol a ON po.nroArbol = a.nroArbol
+GROUP BY p.DNI, p.apellido, p.nombre, p.telefono, p.fnac
+HAVING MIN(a.especie) = 'Coníferas'
+   AND MAX(a.especie) = 'Coníferas';
+
+EXPLICACIÓN DE OPCIÓN 2
+
+- JUNTO TODAS LAS INFO Y AGRUPO TODAS LAS PODAS DEL PODADOR
+- SI EL MINIMO Y EL MAXIMO DE PODAS ES DE CONIFERAS ENTONCES NO PODÓ OTRA COSA... muy rebuscado xdxd
+
+------------------------------------------------------
+7)
+OPCIÓN 1 -----------------
+
+SELECT a.especie
+FROM Arbol a
+JOIN Localidad l ON a.codigoPostal = l.codigoPostal
+WHERE l.nombreL = 'La Plata'
+AND EXISTS (
+	SELECT 1
+	FROM Arbol a2
+	JOIN Localidad l ON a2.codigoPostal = l.codigoPostal
+	WHERE a2.especie = a.especie
+	AND l.nombreL = 'Salta'
+)
+
+OPCION 2----------------- practicamente igual al AR
+
+SELECT a.especie
+FROM Arbol a
+JOIN Localidad l ON a.codigoPostal = l.codigoPostal
+WHERE l.nombreL = 'La Plata'
+INTERSECT
+SELECT a2.especie
+FROM Arbol a2
+JOIN Localidad l2 ON a2.codigoPostal = l2.codigoPostal
+WHERE l2.nombreL = 'Salta'
+
+-- supongo q debe haber una opción con group by y having
+-- pero ni idea
+
+8) -------------------------------------------------
+-- al haber una fk tengo que borrar en cascada
+DELETE 
+FROM Poda 
+WHERE DNI = 22234566;
+
+DELETE 
+FROM Podador
+WHERE DNI = 22234566;
+
+9) ------------------------------------------------- 
+SELECT l.nombreL, l.descripcion, l.nroHabitantes
+FROM Localidad l
+JOIN Arbol a ON a.codigoPostal = l.codigoPostal
+GROUP BY l.codigoPostal, l.nombreL, l.descripcion, l.nroHabitantes
+HAVING COUNT(a.nroArbol) < 5
