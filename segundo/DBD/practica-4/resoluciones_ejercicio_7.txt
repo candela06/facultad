@@ -1,0 +1,123 @@
+1)---------------------------------------------
+SELECT cl.nombre, cl.anioFundacion 
+FROM Club cl
+JOIN Ciudad ci ON ci.codigoCiudad = cl.codigoCiudad
+WHERE ci.nombre = 'La Plata'
+AND NOT EXISTS (
+	SELECT 1
+	FROM Estadio e
+	WHERE e.codigoClub = cl.codigoClub
+)
+-- con count()
+SELECT cl.nombre, cl.anioFundacion 
+FROM Club cl
+JOIN Ciudad ci ON ci.codigoCiudad = cl.codigoCiudad
+LEFT JOIN estadio e ON e.codigoClub = cl.codigoClub
+WHERE ci.nombre = 'La Plata'
+GROUP BY cl.codigoClub, cl.nombre, cl.anioFundacion 
+HAVING count(e.codigoEstadio) = 0
+
+2)---------------------------------------------
+SELECT cl.nombre
+FROM Club cl 
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Jugador j
+	JOIN Ciudad ci ON ci.codigoCiudad = j.codigoCiudad
+	JOIN ClubJugador cj ON cj.DNI = j.DNI
+	WHERE ci.nombre = 'Berisso'
+	AND cj.codigoClub = cl.codigoClub
+)
+
+"el club tal que no exista un jugador que haya jugado en él ni sean de berisso"
+
+3)---------------------------------------------
+-- opcion 1
+SELECT j.DNI, j.nombre, j.apellido 
+FROM Jugador j
+WHERE EXISTS(
+	SELECT 1
+	FROM Club cl
+	JOIN ClubJugador cj ON cj.codigoClub = cl.codigoClub
+	WHERE cl.nombre = 'Gimnasia y Esgrima La Plata'
+	AND cj.DNI = j.DNI
+)
+
+"los jugadores tal que hayan jugado alguna vez en gimnasia"
+
+-- opcion 2
+
+SELECT DISTINCT j.DNI, j.nombre, j.apellido 
+FROM Jugador j
+JOIN ClubJugador cj ON cj.DNI = j.DNI
+JOIN Club c ON c.codigoClub = cj.codigoClub
+WHERE c.nombre = 'Gimnasia y Esgrima La Plata'
+
+"todas las concidencias que cumplan el where 
+y con distinc me quedo con una d las repetidas 
+porque un jugador pudo haber jugado hace dos año,
+lo dejó y volvió a jugar este año"
+
+4)---------------------------------------------
+SELECT DISTINCT j.DNI, j.nombre, j.apellido
+FROM Jugador j
+JOIN ClubJugador cj ON cj.DNI = j.DNI
+JOIN Club c ON c.codigoClub = cj.codigoClub
+JOIN Ciudad ci ON ci.codigoCiudad = c.codigoCiudad
+WHERE j.edad > 29
+AND ci.nombre = "Córdoba"
+
+5)---------------------------------------------
+SELECT  cl.nombre, avg(j.edad) AS edad_promedio
+FROM Club cl
+JOIN ClubJugador cj ON cj.codigoClub = cl.codigoClub
+JOIN Jugador j ON j.DNI = cj.DNI
+WHERE cj.hasta >= 2025
+GROUP BY cl.codigoClub, cl.nombre
+
+"no hace falta el distinct porque está el group by"
+
+6)---------------------------------------------
+SELECT j.nombre, j.apellido, j.edad, count(DISTINCT cj.codigoClub) AS cantidadClubes
+FROM Jugador j
+JOIN ClubJugador cj ON cj.DNI = j.DNI
+GROUP BY j.DNI, j.nombre, j.apellido, j.edad
+
+7)---------------------------------------------
+SELECT cl.nombre
+FROM Club cl
+WHERE NOT EXISTS(
+	SELECT 1
+	FROM Jugador j
+	JOIN ClubJugador cj ON cj.DNI = j.DNI
+	JOIN Ciudad ci ON ci.codigoCiudad = j.codigoCiudad
+	WHERE ci.nombre = 'Mar del Plata'
+	AND cj.codigoClub = cl.codigoClub
+)
+
+8)---------------------------------------------
+SELECT j.nombre, j.apellido
+FROM Jugador j
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Club cl
+	JOIN Ciudad ci ON ci.codigoCiudad = cl.codigoCiudad
+	WHERE ci.nombre = 'Córdoba'
+	AND	NOT EXISTS (
+		SELECT 1
+		FROM ClubJugador cj
+		WHERE cj.codigoClub = cl.codigoClub
+		AND cj.DNI = j.DNI
+	)
+)
+
+9)---------------------------------------------
+INSERT INTO Club (codigoClub,nombre,anioFundacion,codigoCiudad)
+VALUES (
+	1234,
+	'Estrella de Berisso', 
+	1921,
+	(SELECT c.codigoCiudad 
+	 FROM Ciudad c 
+	 WHERE c.nombre = 'Berisso')
+)

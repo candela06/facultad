@@ -1,0 +1,124 @@
+1)----------------------------------------------
+SELECT a.razon_social, a.direccion, a.telefono
+FROM Agencia a
+WHERE EXISTS (
+	SELECT 1
+	FROM Viaje v
+	JOIN Ciudad ci ON ci.codigo_postal = v.cpOrigen
+	JOIN Cliente c ON c.dni = v.dni
+	WHERE v.razon_social = a.razon_social
+	AND ci.nombreCiudad = 'La Plata'
+	AND c.apellido = 'Roma'
+)
+ORDER BY a.razon_social, a.telefono
+
+2)----------------------------------------------
+SELECT  v.fecha, v.hora, cl.*, ci.nombreCiudad AS origen, cid.nombreCiudad AS destino
+FROM Viaje v
+JOIN Cliente cl ON cl.dni = v.dni
+JOIN Ciudad ci ON ci.codigo_postal = v.cpOrigen 
+JOIN Ciudad cid ON cid.codigo_postal = v.cpDestino
+WHERE v.cpOrigen IN (
+	SELECT codigo_postal
+	FROM Ciudad 
+	WHERE nombreCiudad = 'La Plata'
+)
+AND
+cl.apellido = 'Roma'
+
+3)---------------------------------------------
+
+SELECT a.*
+FROM Agencia a
+WHERE EXISTS (
+	SELECT 1
+	FROM Viaje v
+	WHERE v.razon_social = a.razon_social
+	AND v.fecha BETWEEN '2019-01-01' AND '2019-12-31'
+	-- AND YEAR(v.fecha) = 2019
+)
+OR a.email LIKE '%@jmail.com'
+
+4)----------------------------------------------
+OPCIÓN 1----------------------------------------
+SELECT c.dni, c.nombre, c.apellido, c.telefono, c.direccion
+FROM Cliente c
+JOIN Viaje v ON v.dni = c.dni
+JOIN Ciudad ci ON ci.codigo_postal = v.cpDestino
+GROUP BY c.dni, c.nombre, c.apellido, c.telefono, c.direccion
+HAVING max(ci.nombreCiudad) = 'Coronel Brandsen'
+AND min(ci.nombreCiudad) = 'Coronel Brandsen'
+
+OPCIÓN 2----------------------------------------
+SELECT c.*
+FROM Cliente c
+WHERE EXISTS (
+	SELECT 1
+	FROM Viaje v
+	JOIN Ciudad cid ON v.cpDestino = cid.codigo_postal
+	WHERE v.dni = c.dni
+	AND cid.nombreCiudad = 'Coronel Brandsen'
+)
+AND NOT EXISTS (
+	SELECT 1 
+	FROM Viaje v
+	JOIN Ciudad cid ON v.cpDestino = cid.codigo_postal
+	WHERE v.dni = c.dni
+	AND cid.nombreCiudad != 'Coronel Brandsen'
+)
+
+5)----------------------------------------------
+SELECT v.razon_social, count(*) AS cantidadViajes
+FROM Viaje v
+JOIN Ciudad c ON c.codigo_postal = v.cpDestino
+WHERE v.razon_social = 'TAXI Y' 
+AND c.nombreCiudad = 'Villa Elisa'
+
+6)----------------------------------------------
+SELECT c.*
+FROM Cliente c
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Agencia a
+	WHERE NOT EXISTS (
+		SELECT 1
+		FROM Viaje v
+		WHERE v.dni = c.dni
+		AND v.razon_social = a.razon_social
+	)
+)
+
+7)----------------------------------------------
+UPDATE Cliente
+SET telefono = '221-4400897'
+WHERE dni =  38495444
+
+8)----------------------------------------------
+WITH conteos AS (
+	SELECT razon_social, count(*) AS total
+	FROM Viaje
+	GROUP BY razon_social
+),
+
+maximo AS (
+	SELECT max(total) AS maxViaje
+	FROM conteos
+)
+SELECT a.razon_social, a.direccion, a.telefono
+FROM Agencia a
+JOIN conteos c ON c.razon_social = a.razon_social
+JOIN maximo m ON m.maxViaje = c.total
+
+9)----------------------------------------------
+SELECT c.nombre, c.apellido, c.direccion, c.telefono
+FROM Cliente c
+JOIN Viaje v ON v.dni = c.dni
+GROUP BY c.dni, c.nombre, c.apellido, c.direccion, c.telefono
+HAVING count(*) >= 5
+
+10)---------------------------------------------
+DELETE FROM Viaje
+WHERE dni = 40325692;
+
+DELETE FROM Cliente
+WHERE dni = 40325692;

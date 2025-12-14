@@ -1,0 +1,125 @@
+1)------------------------------------------
+SELECT a.DNI, a.Legajo, p.Nombre, p.Apellido
+FROM Alumno a
+JOIN Persona p ON p.DNI = a.DNI
+WHERE a.Anio_Ingreso < 2014
+
+2)------------------------------------------
+SELECT pr.DNI, pr.Matricula, pe.Nombre, pe.Apellido
+FROM Profesor pr
+JOIN Persona pe ON pe.DNI = pr.DNI
+WHERE EXISTS (
+	SELECT 1
+	FROM Profesor_Curso pc
+	JOIN Curso c ON c.Cod_Curso = pc.Cod_Curso	
+	WHERE pc.DNI = pr.DNI
+	AND c.Duracion > 100
+)
+ORDER BY pr.DNI
+
+3)--------------------------------------------
+SELECT a.DNI, per.Nombre, per.Apellido, per.Genero, per.Fecha_Nacimiento
+FROM Alumno a
+JOIN Persona per ON a.DNI = per.DNI
+WHERE EXISTS (
+	SELECT 1
+	FROM Alumno_Curso ac
+	JOIN Curso c ON ac.Cod_Curso = c.Cod_Curso
+	WHERE ac.DNI = a.DNI 
+	AND c.Nombre = 'Diseño de Bases de Datos'
+	AND ac.Anio = 2023
+)
+
+4)--------------------------------------------
+SELECT a.DNI, per.Nombre, per.Apellido, ac.Calificacion
+FROM Alumno a
+JOIN Persona per ON per.DNI = a.DNI
+JOIN Alumno_Curso ac ON ac.DNI = a.DNI
+WHERE ac.Calificacion > 8 
+AND EXISTS (
+	SELECT 1
+	FROM Profesor_Curso pc
+	JOIN Profesor pr ON pc.DNI = pr.DNI
+	JOIN Persona per2 ON pr.DNI = per2.DNI
+	WHERE pc.Cod_Curso = ac.Cod_Curso
+	AND per2.Nombre = 'Juan'
+	AND per2.Apellido = 'Garcia'
+)
+
+5)---------------------------------------------
+SELECT pr.DNI, per.Nombre, per.Apellido, pr.Matricula
+FROM Profesor pr
+JOIN Persona per ON per.DNI = pr.DNI
+JOIN Titulo_Profesor tp ON tp.DNI = pr.DNI
+GROUP BY pr.DNI, per.Nombre, per.Apellido, pr.Matricula
+HAVING count(DISTINCT tp.Cod_Titulo) > 3
+
+6)----------------------------------------------
+SELECT pr.DNI, per.Nombre, per.Apellido, 
+	sum(DISTINCT c.Duracion) AS cantidadHoras, 
+	avg(DISTINCT c.Duracion) AS promedioHoras
+FROM Profesor pr
+JOIN Persona per ON per.DNI = pr.DNI
+JOIN Profesor_Curso pc ON pc.DNI = pr.DNI
+JOIN Curso c ON c.Cod_Curso = pc.Cod_Curso
+GROUP BY pr.DNI, per.Nombre, per.Apellido
+
+7)-----------------------------------------------
+WITH conteos AS (
+	SELECT c.Cod_Curso, c.Nombre, c.Descripcion, 
+		count(ac.DNI) AS total
+	FROM Curso c
+	JOIN Alumno_Curso ac ON c.Cod_Curso = ac.Cod_Curso
+	WHERE ac.Anio = 2024
+	GROUP BY c.Cod_Curso, c.Nombre, c.Descripcion
+)
+
+SELECT Nombre, Descripcion
+FROM conteos 
+WHERE total = ( SELECT max(total) FROM conteos)
+OR total = ( SELECT min(total) FROM conteos)
+
+8)------------------------------------------------
+SELECT a.DNI, per.Nombre, per.Apellido, a.Legajo
+FROM Alumno a
+JOIN Persona per ON per.DNI = a.DNI
+WHERE EXISTS (
+	SELECT 1
+	FROM Alumno_Curso ac
+	JOIN Curso c ON c.Cod_Curso = ac.Cod_Curso
+	WHERE ac.DNI = a.DNI
+	AND c.Nombre LIKE '%BD%'
+	AND ac.Anio = 2022
+)
+AND NOT EXISTS (
+	SELECT 1
+	FROM Alumno_Curso ac
+	WHERE ac.DNI = a.DNI
+	AND ac.Anio = 2023
+)
+
+9)------------------------------------------------
+INSERT INTO Persona 
+VALUES (20010005, 'Silva', 'Candela', '2002-07-22', 'soltera', 'F');
+
+INSERT INTO Profesor 
+VALUES (20010005,'MAT-005','EXP-005')
+
+10)-----------------------------------------------
+UPDATE Persona
+SET Estado_Civil = 'divorciado'
+WHERE DNI = (
+	SELECT DNI
+	FROM Alumno
+	WHERE Legajo = '2020/09'
+)
+
+11)-----------------------------------------------
+DELETE FROM Alumno_Curso 
+WHERE DNI = 30568989;
+
+DELETE FROM Alumno
+WHERE DNI = 30568989;
+
+DELETE FROM Persona
+WHERE DNI = 30568989;
