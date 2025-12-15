@@ -1,0 +1,80 @@
+1)---------------------------------------------
+SELECT p.nombrP, p.descripcion, p.fechaInicioP, p.fechaFinP
+FROM Proyecto p
+WHERE p.fechaFinP IS NOT NULL AND p.fechaFinP >= p.fechaFinEstimada
+
+2)---------------------------------------------
+SELECT em.nombre, em.apellido, em.telefono, em.direccion, em.fechaIngreso
+FROM Empleado em
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Proyecto p
+	WHERE p.DNIResponsable = em.DNI
+)
+ORDER BY em.apellido
+
+3)---------------------------------------------
+SELECT em.DNI, em.nombre, em.apellido, em.telefono, em.direccion
+FROM Empleado em
+JOIN Equipo eq ON em.DNI = eq.DNILider
+GROUP BY em.DNI, em.nombre, em.apellido, em.telefono, em.direccion
+HAVING count(*) > 1
+
+4)---------------------------------------------
+SELECT DISTINCT em.DNI, em.nombre, em.apellido, em.telefono, em.direccion
+FROM Proyecto p
+JOIN Empleado_Equipo ee ON (ee.codEquipo = p.equipoBackend OR ee.codEquipo = p.equipoFrontend)
+JOIN Empleado em ON em.DNI = ee.DNI
+WHERE p.nombrP = 'Proyecto X'
+
+
+
+5)---------------------------------------------
+SELECT e.nombreE AS teamName, l.*
+FROM Equipo e
+JOIN Empleado l ON e.DNILider = l.DNI
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Empleado_Equipo ee
+	WHERE ee.codEquipo = e.codEquipo
+)
+AND e.descTecnologias = 'Java'
+
+6)---------------------------------------------
+
+UPDATE Empleado
+SET nombre = 'Candela',
+	apellido = 'Silva',
+	direccion = 'Florencio Varela'
+WHERE DNI = 40568965
+
+7)---------------------------------------------
+SELECT DISTINCT em.DNI, em.nombre, em.apellido, em.telefono, em.direccion
+FROM Empleado em
+JOIN Proyecto p ON p.DNIResponsable = em.DNI
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Equipo e
+	WHERE e.DNILider = em.DNI
+)
+
+8)---------------------------------------------
+SELECT e.nombreE, e.descTecnologias
+FROM Equipo e
+WHERE EXISTS (
+    SELECT 1
+    FROM Proyecto p
+    WHERE p.equipoFrontend = e.codEquipo
+)
+AND EXISTS (
+    SELECT 1
+    FROM Proyecto p
+    WHERE p.equipoBackend = e.codEquipo
+);
+
+9)---------------------------------------------
+SELECT p.nombrP, p.descripcion, p.fechaInicioP, em.nombre, em.apellido
+FROM Proyecto p
+JOIN Empleado em ON em.DNI = p.DNIResponsable
+WHERE p.fechaFinEstimada BETWEEN '2025-01-01' AND '2025-12-31';
+

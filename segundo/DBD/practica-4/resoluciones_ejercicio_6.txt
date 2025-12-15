@@ -1,0 +1,159 @@
+1)---------------------------------------------
+SELECT repu.nombre, repu.stock, repu.precio
+FROM Repuesto repu 
+ORDER BY repu.precio
+
+2)---------------------------------------------
+SELECT DISTINCT repu.nombre, repu.stock, repu.precio
+FROM Repuesto repu 
+JOIN RepuestoReparacion rr ON rr.codRep = repu.codRep
+JOIN Reparacion repa ON repa.nroReparac = rr.nroReparac
+WHERE repa.fecha BETWEEN '2023-01-01' AND '2023-12-31'
+AND NOT EXISTS (
+	SELECT 1
+	FROM RepuestoReparacion rr2
+	JOIN Reparacion repa2 ON repa2.nroReparac = rr2.nroReparac
+	JOIN Tecnico tec ON tec.codTec = repa2.codTec
+	WHERE rr2.codRep = repu.codRep
+	AND tec.nombre = 'José Gonzalez'
+)
+
+OTRA OPCIÓN------------------------------------
+SELECT repu.nombre, repu.stock, repu.precio
+FROM Repuesto repu 
+WHERE EXISTS (
+	SELECT 1
+	FROM RepuestoReparacion rr
+	JOIN Reparacion repa ON repa.nroReparac = rr.nroReparac
+	WHERE rr.codRep = repu.codRep
+	AND	repa.fecha BETWEEN '2023-01-01' AND '2023-12-31'
+)
+
+AND NOT EXISTS (
+	SELECT 1
+	FROM RepuestoReparacion rr2
+	JOIN Reparacion repa2 ON repa2.nroReparac = rr2.nroReparac
+	JOIN Tecnico tec ON tec.codTec = repa2.codTec
+	WHERE rr2.codRep = repu.codRep 
+	AND tec.nombre = 'José Gonzalez'
+)
+
+
+
+3)---------------------------------------------
+
+SELECT tec.nombre, tec.especialidad
+FROM Tecnico tec 
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Reparacion rep
+	WHERE rep.codTec = tec.codTec
+)
+
+4)---------------------------------------------
+SELECT tec.nombre, tec.especialidad
+FROM Tecnico tec
+WHERE EXISTS (
+	SELECT 1
+	FROM Reparacion rep
+	WHERE rep.codTec = tec.codTec
+	AND rep.fecha BETWEEN '2022-01-01' AND '2022-12-31'
+)
+AND NOT EXISTS (
+	SELECT 1
+	FROM Reparacion rep
+	WHERE rep.codTec = tec.codTec
+	AND (rep.fecha < '2022-01-01' OR rep.fecha > '2022-12-31')
+)
+
+5)---------------------------------------------
+SELECT DISTINCT repu.nombre, repu.stock, count(DISTINCT repa.codTec) AS cantTecnicosLoUsaron
+FROM Repuesto repu 
+LEFT JOIN RepuestoReparacion rr ON rr.codRep = repu.codRep
+LEFT JOIN Reparacion repa ON repa.nroReparac = rr.nroReparac
+GROUP BY repu.codRep, repu.nombre, repu.stock
+
+6)---------------------------------------------
+SELECT tec.nombre, tec.especialidad
+FROM Tecnico tec 
+LEFT JOIN Reparacion rep ON rep.codTec = tec.codTec
+GROUP BY tec.codTec, tec.nombre, tec.especialidad
+HAVING count(rep.nroReparac) = (
+	SELECT max(cant)
+	FROM (
+		SELECT count(r.nroReparac) AS cant
+		FROM Tecnico t
+		LEFT JOIN Reparacion r ON r.codTec = t.codTec
+		GROUP BY t.codTec
+	)
+)
+UNION ALL
+SELECT tec.nombre, tec.especialidad
+FROM Tecnico tec 
+LEFT JOIN Reparacion rep ON rep.codTec = tec.codTec
+GROUP BY tec.codTec, tec.nombre, tec.especialidad
+HAVING count(rep.nroReparac) = (
+	SELECT min(cant)
+	FROM (
+		SELECT count(r.nroReparac) AS cant
+		FROM Tecnico t
+		LEFT JOIN Reparacion r ON r.codTec = t.codTec
+		GROUP BY t.codTec
+	)
+)
+
+7)---------------------------------------------
+SELECT repu.nombre, repu.stock, repu.precio
+FROM Repuesto repu 
+WHERE repu.stock > 0
+AND NOT EXISTS (
+	SELECT 1
+	FROM RepuestoReparacion rr
+	JOIN Reparacion repa ON repa.nroReparac = rr.nroReparac
+	WHERE rr.codRep = repu.codRep
+	AND repa.precio_total > 10000
+)
+
+8)---------------------------------------------
+SELECT DISTINCT r.nroReparac, r.fecha, r.precio_total
+FROM Reparacion r
+JOIN RepuestoReparacion rr ON rr.nroReparac = r.nroReparac
+WHERE rr.precio BETWEEN 10000 AND 15000 
+ORDER BY r.nroReparac
+
+9)---------------------------------------------
+opcion 1---------------------------------------
+SELECT r.nombre, r.stock, r.precio
+FROM Repuesto r
+JOIN RepuestoReparacion rr ON rr.codRep = r.codRep
+JOIN Reparacion rep ON rep.nroReparac = rr.nroReparac
+GROUP BY r.codRep, r.nombre, r.stock, r.precio
+HAVING count(DISTINCT rep.codTec) = (SELECT count(*) FROM Tecnico)
+
+"si de cada repuesto en las repaciones que lo usaron 
+la cantidad de tecnicos distintos es igual a la cantidad total de tecnicos 
+entonces ese repuesto fue usado por todos los tecnicos" 
+
+opción 2---------------------------------------
+SELECT r.nombre, r.stock, r.precio
+FROM Repuesto r
+WHERE NOT EXISTS (
+	SELECT 1
+	FROM Tecnico t
+	WHERE NOT EXISTS (
+		SELECT 1 
+		FROM RepuestoReparacion rr
+		JOIN Reparacion rep ON rep.nroReparac = rr.nroReparac
+		WHERE rr.codRep = r.codRep
+		AND rep.codTec = t.codTec
+	)
+)
+
+"un repuesto tal que no exista un solo tecnico que no lo haya usado"
+
+10)--------------------------------------------
+SELECT rep.nroReparac, rep.fecha, rep.codTec, rep.precio_total
+FROM Reparacion rep 
+JOIN RepuestoReparacion rr ON rr.nroReparac = rep.nroReparac
+GROUP BY rep.nroReparac, rep.fecha, rep.codTec, rep.precio_total
+HAVING count(*) >= 4

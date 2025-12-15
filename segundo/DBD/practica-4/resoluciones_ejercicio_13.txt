@@ -1,0 +1,71 @@
+1)---------------------------------------------
+SELECT DISTINCT e.nombreEntrenador, e.fechaNacimiento, e.direccion
+FROM Entrenador e
+JOIN Entrenamiento en ON en.IdEntrenador = e.IdEntrenador
+WHERE en.fecha BETWEEN '2023-01-01' AND '2023-12-31'
+2)---------------------------------------------
+SELECT c.nombreCancha, count(e.IdEntrenamiento) AS cantidadDeEntrenamientos
+FROM Cancha c
+JOIN Complejo co ON co.IdComplejo = c.IdComplejo
+JOIN Entrenamiento e ON e.IdCancha = c.IdCancha
+WHERE co.nombreComplejo = 'Complejo 1'
+GROUP BY c.IdCancha, c.nombreCancha
+
+3)---------------------------------------------
+SELECT c.nombreComplejo
+FROM Complejo c
+WHERE EXISTS (
+	SELECT 1
+	FROM Entrenamiento en
+	JOIN Entrenador e ON e.IdEntrenador = en.IdEntrenador
+	JOIN Cancha ca ON ca.IdCancha = en.IdCancha
+	WHERE e.nombreEntrenador = 'Jorge Gonzalez'
+	AND ca.IdComplejo = c.IdComplejo
+)
+ORDER BY c.nombreComplejo ASC;
+
+4)---------------------------------------------
+SELECT e.nombreEntrenador, e.fechaNacimiento, e.direccion
+FROM Entrenador e
+WHERE EXISTS (
+	SELECT 1
+	FROM Club cl
+	WHERE cl.nombreClub = 'Everton'
+	AND EXISTS (
+		SELECT 1
+		FROM Complejo co
+		JOIN Cancha ca ON ca.IdComplejo = co.IdComplejo
+		JOIN Entrenamiento en ON en.IdCancha = ca.IdCancha
+		WHERE co.IdClub = cl.IdClub 
+		AND en.IdEntrenador = e.IdEntrenador
+	)
+)
+AND EXISTS (
+	SELECT 1
+	FROM Club cl
+	WHERE cl.nombreClub = 'Estrella de Berisso'
+	AND EXISTS (
+		SELECT 1
+		FROM Complejo co
+		JOIN Cancha ca ON ca.IdComplejo = co.IdComplejo
+		JOIN Entrenamiento en ON en.IdCancha = ca.IdCancha
+		WHERE co.IdClub = cl.IdClub 
+		AND en.IdEntrenador = e.IdEntrenador
+	)
+)
+
+5)---------------------------------------------
+SELECT DISTINCT cl.nombreClub, cl.ciudad
+FROM Club cl
+JOIN Complejo co ON co.IdClub = cl.IdClub
+JOIN Cancha ca ON ca.IdComplejo = co.IdComplejo
+JOIN Entrenamiento en ON en.IdCancha = ca.IdCancha
+JOIN Entrenador e ON e.IdEntrenador = en.IdEntrenador
+WHERE e.nombreEntrenador = 'Marcos Perez'
+6)---------------------------------------------
+DELETE FROM Entrenamiento
+WHERE IdEntrenador IN (
+	SELECT e.IdEntrenador
+	FROM Entrenador e
+	WHERE e.nombreEntrenador = 'Juan Perez'
+)
