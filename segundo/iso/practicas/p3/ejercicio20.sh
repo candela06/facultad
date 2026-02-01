@@ -16,7 +16,7 @@ pop(){
         local dato="${pila[$sp]}"
         unset "pila[$sp]"
         ((sp--))
-        echo "$dato"
+       # echo "$dato"
     fi
 }
 
@@ -34,3 +34,21 @@ print(){
         done
     fi
 }
+
+for ((i=1;i<=10;i++)); do
+    push "$i"
+done
+
+echo "longitud de la pila: $(length)"
+echo "Contenido de la pila:"
+print
+
+
+for ((i=1;i<=3;i++)); do
+    pop
+done
+
+echo "longitud de la pila: $(length)"
+echo "Contenido de la pila:"
+print
+
